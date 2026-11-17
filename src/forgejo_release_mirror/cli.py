@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import http.client
 import json
 import os
 import sys
@@ -54,7 +55,13 @@ def main(argv: list[str] | None = None) -> int:
             destination_repository=args.destination_repository,
             dry_run=args.dry_run,
         )
-    except (RuntimeError, ValueError, OSError, KeyError) as exc:
+    except (
+        RuntimeError,
+        ValueError,
+        OSError,
+        KeyError,
+        http.client.HTTPException,
+    ) as exc:
         print(json.dumps({"status": "failed", "error": str(exc)}), file=sys.stderr)
         return 1
     print(json.dumps({"status": "ok", "dry_run": args.dry_run, "releases": results}))

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import http.client
 import io
 import json
 import os
@@ -138,17 +139,19 @@ class CLITest(unittest.TestCase):
                 self.assertNotIn("secret", errors.getvalue())
 
     def test_transport_failure_has_nonzero_status_and_json_error(self) -> None:
-        errors = io.StringIO()
-        with (
-            patch.dict(
-                os.environ, {"FORGEJO_READ_TOKEN": "source", "GITHUB_TOKEN": "target"}
-            ),
-            patch(
-                "forgejo_release_mirror.cli.synchronize", side_effect=OSError("offline")
-            ),
-            contextlib.redirect_stderr(errors),
-        ):
-            self.assertEqual(main(self.arguments), 1)
-        self.assertEqual(
-            json.loads(errors.getvalue()), {"status": "failed", "error": "offline"}
-        )
+        for error in (OSError("offline"), http.client.IncompleteRead(b"", 10)):
+            with self.subTest(error=type(error).__name__):
+                errors = io.StringIO()
+                with (
+                    patch.dict(
+                        os.environ,
+                        {"FORGEJO_READ_TOKEN": "source", "GITHUB_TOKEN": "target"},
+                    ),
+                    patch("forgejo_release_mirror.cli.synchronize", side_effect=error),
+                    contextlib.redirect_stderr(errors),
+                ):
+                    self.assertEqual(main(self.arguments), 1)
+                self.assertEqual(
+                    json.loads(errors.getvalue()),
+                    {"status": "failed", "error": str(error)},
+                )
