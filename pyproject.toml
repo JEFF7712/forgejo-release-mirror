@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "forgejo-release-mirror"
+version = "0.1.0"
+description = "Mirror published Forgejo releases and verified assets to GitHub"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Rupan Sunderapandyan" }]
+dependencies = []
+
+[project.scripts]
+forgejo-release-mirror = "forgejo_release_mirror.cli:main"
+
+[project.urls]
+Source = "https://github.com/JEFF7712/forgejo-release-mirror"
+Issues = "https://github.com/JEFF7712/forgejo-release-mirror/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[dependency-groups]
+dev = ["ruff>=0.14", "pyright>=1.1.400"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP"]
+
+[tool.pyright]
+include = ["src"]
+pythonVersion = "3.11"
+typeCheckingMode = "standard"
