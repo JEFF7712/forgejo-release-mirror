@@ -106,8 +106,5 @@ Tests use fixtures and loopback HTTP servers. They require no service tokens
 and do not create releases on external services. Changes should preserve the
 tag checks, published-asset protection, and draft-before-publish behavior.
 
-## Origin and license
-
-Extracted from Rupan's homelab release synchronizer at commit
-`07443255cb7a375665e8a3b8e63b575aa07c5239`, retaining its regression suite.
-The extraction and packaging were assisted by OpenAI Codex. Licensed under MIT.
+## License
+Licensed under MIT.
